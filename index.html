@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coca-Cola | Historia, Diseño e Impacto Global</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --coke-red: #F40009;
+      --coke-dark-red: #9E0006;
+      --coke-deep: #140506;
+      --coke-charcoal: #1E1E22;
+      --coke-cream: #FFF8F0;
+      --coke-gold: #D4AF37;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --transition-speed: 0.65s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--coke-deep);
+      color: #ffffff;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+    }
+
+    /* Ambient animated bubbles */
+    .bubbles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: -40px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.45), rgba(255,255,255,0.05));
+      border-radius: 50%;
+      animation: rise linear infinite;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.6;
+      }
+      85% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(-110vh) scale(1.3);
+        opacity: 0;
+      }
+    }
+
+    /* Dynamic Ribbon Wave Background */
+    .ribbon-bg {
+      position: fixed;
+      bottom: -10%;
+      left: -5%;
+      width: 110%;
+      height: 45%;
+      z-index: 0;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    /* Deck Container */
+    .deck {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 4.5rem 6rem 5.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(60px) scale(0.97);
+      transition: opacity var(--transition-speed) cubic-bezier(0.22, 1, 0.36, 1),
+                  transform var(--transition-speed) cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility var(--transition-speed);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0) scale(1);
+    }
+
+    .slide.prev {
+      transform: translateX(-60px) scale(0.97);
+    }
+
+    /* Themes per slide */
+    .theme-red {
+      background: radial-gradient(circle at 80% 20%, #ff1e27 0%, var(--coke-red) 45%, var(--coke-dark-red) 100%);
+    }
+
+    .theme-dark {
+      background: radial-gradient(circle at 20% 20%, #2b090c 0%, var(--coke-deep) 60%, #09090b 100%);
+    }
+
+    .theme-cream {
+      background: linear-gradient(135deg, #FFF8F0 0%, #F5E6D3 100%);
+      color: #1A1110;
+    }
+
+    /* Typography */
+    .script-title {
+      font-family: 'Lobster', cursive;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    .serif-accent {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .theme-dark .eyebrow {
+      color: var(--coke-red);
+    }
+
+    .theme-red .eyebrow {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .theme-cream .eyebrow {
+      color: var(--coke-red);
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 5.5vw, 5.2rem);
+      line-height: 1.06;
+      margin-bottom: 1.25rem;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 3.6vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    p.lead {
+      font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+      line-height: 1.6;
+      max-width: 68ch;
+      opacity: 0.92;
+    }
+
+    /* Layout Helpers */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.6rem;
+      margin-top: 1rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.4rem;
+      margin-top: 1.2rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 1.75rem;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--coke-red);
+    }
+
+    .theme-cream .card {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(244, 0, 9, 0.18);
+      box-shadow: 0 12px 30px rgba(26, 17, 16, 0.06);
+    }
+
+    .card-num {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: var(--coke-red);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .theme-red .card-num {
+      color: #ffffff;
+    }
+
+    .card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+
+    .card p {
+      font-size: 0.94rem;
+      line-height: 1.55;
+      opacity: 0.88;
+    }
+
+    /* Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      border-left: 3px solid var(--coke-red);
+      padding-left: 1.75rem;
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -2.22rem;
+      top: 0.3rem;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--coke-red);
+      border: 3px solid var(--coke-deep);
+    }
+
+    .timeline-year {
+      font-weight: 900;
+      color: var(--coke-red);
+      font-size: 1rem;
+    }
+
+    /* Pill tags */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1.5rem;
+    }
+
+    .pill {
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .theme-cream .pill {
+      background: rgba(244, 0, 9, 0.1);
+      border-color: rgba(244, 0, 9, 0.25);
+      color: var(--coke-dark-red);
+    }
+
+    /* Bar chart */
+    .bar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--coke-red), #ff5e65);
+      border-radius: 999px;
+    }
+
+    /* Top Header & Controls */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .brand-badge {
+      font-family: 'Lobster', cursive;
+      font-size: 1.5rem;
+      color: #ffffff;
+      background: var(--coke-red);
+      padding: 0.25rem 1rem;
+      border-radius: 999px;
+      box-shadow: 0 4px 15px rgba(244, 0, 9, 0.4);
+      pointer-events: auto;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 0.6rem;
+      pointer-events: auto;
+    }
+
+    .btn-icon {
+      background: rgba(20, 5, 6, 0.65);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+      background: var(--coke-red);
+      border-color: var(--coke-red);
+    }
+
+    /* Bottom Navigation */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem 2.5rem 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .progress-wrap {
+      flex: 1;
+      max-width: 320px;
+      height: 5px;
+      background: rgba(128, 128, 128, 0.3);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 8.33%;
+      background: var(--coke-red);
+      transition: width 0.4s ease;
+    }
+
+    .slide-counter {
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(20, 5, 6, 0.65);
+      color: #fff;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .nav-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(20, 5, 6, 0.72);
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: var(--coke-red);
+      transform: scale(1.08);
+    }
+
+    /* Speaker Notes Drawer */
+    .notes-drawer {
+      position: fixed;
+      bottom: 4.8rem;
+      right: 2.5rem;
+      width: min(440px, 88vw);
+      background: rgba(18, 18, 22, 0.94);
+      color: #f4f4f6;
+      border: 1px solid rgba(244, 0, 9, 0.45);
+      border-radius: 16px;
+      padding: 1.2rem 1.4rem;
+      z-index: 20;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      display: none;
+    }
+
+    .notes-drawer.open {
+      display: block;
+    }
+
+    .notes-drawer h4 {
+      color: var(--coke-red);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.5rem;
+    }
+
+    .notes-drawer p {
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 900px) {
+      .slide {
+        padding: 4.5rem 2rem 5rem;
+        overflow-y: auto;
+        justify-content: flex-start;
+      }
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Fizz Bubbles -->
+  <div class="bubbles" id="bubbles"></div>
+
+  <!-- Iconic Dynamic Ribbon SVG -->
+  <svg class="ribbon-bg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <path fill="#ffffff" fill-opacity="0.35" d="M0,192L80,186.7C160,181,320,171,480,181.3C640,192,800,224,960,218.7C1120,213,1280,171,1360,149.3L1440,128L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+  </svg>
+
+  <!-- Top Navigation -->
+  <header class="top-bar">
+    <div class="brand-badge">Coca-Cola</div>
+    <div class="top-actions">
+      <button class="btn-icon" id="toggleNotes" title="Mostrar/Ocultar notas del orador">Notas (N)</button>
+      <button class="btn-icon" id="toggleFullscreen" title="Pantalla completa">Pantalla Completa (F)</button>
+    </div>
+  </header>
+
+  <!-- Slides Deck -->
+  <main class="deck" id="deck">
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide theme-red active" data-note="Bienvenida: Presenta cómo Coca-Cola pasó de una farmacia local en Atlanta a convertirse en uno de los símbolos culturales y de diseño más reconocibles del planeta.">
+      <span class="eyebrow">Presentación Ejecutiva &amp; Creativa · 1886 – Presente</span>
+      <h1 class="script-title">Coca-Cola: La Chispa de la Cultura Global</h1>
+      <p class="lead">Un recorrido visual por la historia, el diseño industrial, la psicología del marketing y el impacto mundial de la marca que convirtió un refresco en un lenguaje universal.</p>
+      <div class="pill-row">
+        <span class="pill">140 Años de Historia</span>
+        <span class="pill">Diseño Icónico</span>
+        <span class="pill">Cultura Pop</span>
+        <span class="pill">+200 Países</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: EL ORIGEN -->
+    <section class="slide theme-dark" data-note="En mayo de 1886, John Pemberton creó el jarabe en Atlanta. Su contable, Frank M. Robinson, propuso el nombre Coca-Cola pensando que las dos 'C' lucirían extraordinarias en publicidad.">
+      <div class="grid-2">
+        <div>
+          <span class="eyebrow">01 · El Nacimiento de una Leyenda</span>
+          <h2>De una Farmacia en Atlanta al Mundo</h2>
+          <p class="lead">Todo comenzó el 8 de mayo de 1886 en Jacobs' Pharmacy. Lo que nació como un tónico carbonatado vendido a 5 centavos el vaso se transformó gracias a una visión publicitaria sin precedentes.</p>
+          <div class="timeline" style="margin-top: 1.8rem;">
+            <div class="timeline-item">
+              <div class="timeline-year">1886 — Dr. John S. Pemberton</div>
+              <div>Crea la fórmula original; se vendían apenas 9 vasos al día.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">1886 — Frank M. Robinson</div>
+              <div>Bautiza la bebida y diseña la caligrafía <em>Spencerian</em> original.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">1892 — Asa Griggs Candler</div>
+              <div>Funda The Coca-Cola Company e impulsa los primeros cupones gratis de la historia.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <span class="card-num">5¢</span>
+          <h3>Precio Fijo Durante 70 Años</h3>
+          <p>Entre 1886 y 1959, una botella de Coca-Cola costó exactamente cinco centavos en Estados Unidos, consolidando una estrategia de volumen masivo y accesibilidad democrática.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: LA FÓRMULA SECRETA -->
+    <section class="slide theme-cream" data-note="El aura de misterio alrededor del ingrediente 'Merchandise 7X' funcionó como una herramienta de relaciones públicas gratuita durante más de un siglo.">
+      <span class="eyebrow">02 · Narrativa &amp; Misterio</span>
+      <h2>Merchandise 7X: El Poder de lo Secreto</h2>
+      <p class="lead">Más allá de la química, Coca-Cola convirtió la confidencialidad de su receta en uno de los activos narrativos más valiosos del marketing moderno.</p>
+      <div class="grid-3">
+        <div class="card">
+          <span class="card-num">01</span>
+          <h3>La Bóveda de Atlanta</h3>
+          <p>Tras pasar 86 años en un banco de SunTrust, la fórmula escrita se exhibe hoy dentro de una bóveda de alta seguridad en <em>World of Coca-Cola</em>.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">02</span>
+          <h3>Consistencia Sensorial</h3>
+          <p>El equilibrio exacto entre acidez, dulzor, carbonatación y aceites esenciales garantiza el mismo perfil de sabor en Tokio, Lima o Madrid.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">03</span>
+          <h3>Mito Como Diferenciador</h3>
+          <p>Mientras los competidores copiaban el color oscuro, el aura de "fórmula inimitable" blindó la autenticidad de la marca original.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: LA BOTELLA CONTOUR -->
+    <section class="slide theme-dark" data-note="En 1915, la compañía retó a los fabricantes de vidrio a crear una botella tan distintiva que pudiera reconocerse al tacto en la oscuridad o incluso rota en el suelo.">
+      <div class="grid-2">
+        <div>
+          <span class="eyebrow">03 · Diseño Industrial</span>
+          <h2>La Botella Contour (1915): Reconocible en la Oscuridad</h2>
+          <p class="lead">Ante la aparición de decenas de imitadores, Coca-Cola lanzó un brief histórico: diseñar un envase identificable al tacto sin ver la etiqueta, o incluso hecho añicos en el suelo.</p>
+          <div class="pill-row">
+            <span class="pill">Root Glass Company (Indiana)</span>
+            <span class="pill">Inspirada en la vaina de cacao</span>
+            <span class="pill">Patente D48,160</span>
+          </div>
+        </div>
+        <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <!-- Custom SVG Contour Bottle Silhouette -->
+          <svg width="110" height="250" viewBox="0 0 120 280" fill="none">
+            <rect x="46" y="10" width="28" height="14" rx="4" fill="#F40009"/>
+            <path d="M48 24H72L76 70C88 95 94 120 90 155C86 185 88 215 92 250C93 262 84 270 72 270H48C36 270 27 262 28 250C32 215 34 185 30 155C26 120 32 95 44 70L48 24Z" stroke="#ffffff" stroke-width="4" fill="rgba(244,0,9,0.22)"/>
+            <path d="M34 125H86M33 165H87" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-dasharray="4 4"/>
+            <text x="60" y="150" text-anchor="middle" fill="#ffffff" font-family="Lobster, cursive" font-size="16">Coca-Cola</text>
+          </svg>
+          <p style="text-align:center; margin-top:0.8rem; font-size:0.85rem;">Primer producto comercial en aparecer en la portada de la revista <strong>TIME</strong> (1950).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: PSICOLOGÍA DEL COLOR Y TIPOGRAFÍA -->
+    <section class="slide theme-red" data-note="El contraste entre el rojo vibrante (PMS 484) y la tipografía blanca fluida logra una legibilidad instantánea sin importar el alfabeto local.">
+      <span class="eyebrow">04 · Identidad Visual</span>
+      <h2>El Rojo Que Se Lee Sin Traducir</h2>
+      <p class="lead">La arquitectura visual de Coca-Cola combina tres códigos invariables que activan el reconocimiento cerebral en menos de 0.4 segundos.</p>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Rojo Vibrante</h3>
+          <p>Originalmente usado para distinguir los barriles de jarabe de los de alcohol ante agentes fiscales, hoy simboliza energía, pasión y vitalidad.</p>
+        </div>
+        <div class="card">
+          <h3>Caligrafía Spencerian</h3>
+          <p>Sus curvas orgánicas evocan movimiento y cercanía humana, contrastando con los logotipos geométricos y rígidos del siglo XX.</p>
+        </div>
+        <div class="card">
+          <h3>Dynamic Ribbon (1969)</h3>
+          <p>La ola blanca inferior aporta fluidez líquida y cohesiona toda la arquitectura de empaques, camiones y puntos de venta globales.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: SANTA CLAUS Y LA NAVIDAD -->
+    <section class="slide theme-cream" data-note="Antes de 1931, Santa Claus era representado de múltiples formas (delgado, serio, vestido de verde o marrón). Haddon Sundblom creó el arquetipo cálido que perdura hoy.">
+      <div class="grid-2">
+        <div>
+          <span class="eyebrow">05 · Cultura Pop &amp; Estacionalidad</span>
+          <h2>1931: Cómo Coca-Cola Rediseñó la Navidad</h2>
+          <p class="lead">Para impulsar el consumo en pleno invierno, la marca encargó al ilustrador <strong>Haddon Sundblom</strong> crear un Santa Claus cálido, humano y alegre.</p>
+          <p style="margin-top:1rem; line-height:1.6;">Durante más de 30 años, las pinturas al óleo de Sundblom establecieron el imaginario global de Santa Claus: traje rojo, cinturón negro, barba blanca abundante y mejillas rosadas.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">1995</span>
+          <h3>Las Caravanas Navideñas</h3>
+          <p>Los camiones iluminados acompañados del jingle <em>"Holidays Are Coming"</em> convirtieron el inicio de la campaña publicitaria en el banderazo oficial de la temporada navideña en decenas de países.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: MARKETING EMOCIONAL -->
+    <section class="slide theme-dark" data-note="Coca-Cola entendió temprano que no vende líquido oscuro con gas: vende momentos de conexión, optimismo y pertenencia.">
+      <span class="eyebrow">06 · Campañas Históricas</span>
+      <h2>De "Hilltop" a "Comparte una Coca-Cola"</h2>
+      <p class="lead">Cada década, la marca reinterpretó el espíritu cultural de su época sin abandonar su esencia optimista.</p>
+      <div class="grid-3">
+        <div class="card">
+          <span class="card-num">1971</span>
+          <h3>"Hilltop" (I'd Like to Buy the World a Coke)</h3>
+          <p>Un himno de unión multicultural grabado en una colina italiana que trascendió la publicidad para convertirse en éxito musical global.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">1962</span>
+          <h3>Andy Warhol &amp; El Pop Art</h3>
+          <p>Warhol inmortalizó las botellas como símbolo de igualdad: <em>"El presidente toma Coca-Cola, Liz Taylor toma Coca-Cola, y tú también puedes tomarla"</em>.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">2011</span>
+          <h3>Comparte una Coca-Cola</h3>
+          <p>Reemplazar el logotipo por nombres propios generó millones de interacciones orgánicas en redes sociales y revirtió una década de caída en consumo joven.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: ESCALA GLOBAL EN CIFRAS -->
+    <section class="slide theme-red" data-note="La red de distribución de Coca-Cola es uno de los sistemas logísticos más capilares del mundo, operando mediante socios embotelladores locales.">
+      <span class="eyebrow">07 · Impacto Mundial</span>
+      <h2>Un Gigante en Cada Rincón del Planeta</h2>
+      <p class="lead">Gracias a su modelo de franquicia con embotelladores locales, el producto llega desde megaciudades hasta comunidades rurales remotas.</p>
+      <div class="grid-4">
+        <div class="card">
+          <span class="card-num">+2.2B</span>
+          <h3>Porciones Diarias</h3>
+          <p>Consumidas cada día alrededor del mundo en todas sus categorías.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">+200</span>
+          <h3>Países y Territorios</h3>
+          <p>Presencia prácticamente universal con adaptación cultural local.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">+200</span>
+          <h3>Marcas Activas</h3>
+          <p>Un ecosistema completo de bebidas que trasciende las gaseosas.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">94%</span>
+          <h3>Reconocimiento Global</h3>
+          <p>Una de las palabras más comprendidas en todo el mundo.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: PORTAFOLIO TOTAL -->
+    <section class="slide theme-dark" data-note="La empresa evolucionó de ser una compañía de un solo refresco a una 'Total Beverage Company' enfocada en opciones bajas o sin calorías.">
+      <div class="grid-2">
+        <div>
+          <span class="eyebrow">08 · Estrategia de Negocio</span>
+          <h2>De Refresco Único a Compañía Total de Bebidas</h2>
+          <p class="lead">Ante el cambio en los hábitos de salud del consumidor, el portafolio se diversificó hacia hidratación, café, jugos y versiones sin azúcar.</p>
+          <div class="pill-row">
+            <span class="pill">Coca-Cola Zero Azúcar</span>
+            <span class="pill">Sprite &amp; Fanta</span>
+            <span class="pill">Powerade</span>
+            <span class="pill">Costa Coffee</span>
+            <span class="pill">Del Valle / Minute Maid</span>
+            <span class="pill">Topo Chico</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:1.2rem;">Evolución del Enfoque de Portafolio</h3>
+          <div class="bar-group">
+            <div>
+              <div class="bar-label"><span>Opciones Bajas / Sin Calorías</span><span>~68% del portafolio</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 68%;"></div></div>
+            </div>
+            <div>
+              <div class="bar-label"><span>Hidratación, Aguas y Deportivas</span><span>Crecimiento acelerado</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 54%;"></div></div>
+            </div>
+            <div>
+              <div class="bar-label"><span>Café, Té y Bebidas Nutritivas</span><span>Expansión global</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 46%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: INNOVACIÓN Y TRANSFORMACIÓN DIGITAL -->
+    <section class="slide theme-cream" data-note="Coca-Cola fue una de las primeras grandes marcas de consumo masivo en integrar IA generativa en sus campañas ('Masterpiece' y 'Create Real Magic').">
+      <span class="eyebrow">09 · Innovación &amp; Futuro</span>
+      <h2>Creatividad Aumentada por Inteligencia Artificial</h2>
+      <p class="lead">La plataforma global <strong>"Real Magic"</strong> fusiona narrativas humanas con tecnología generativa, datos en tiempo real y experiencias conectadas.</p>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Create Real Magic</h3>
+          <p>Plataforma que permitió a artistas digitales de todo el mundo remezclar archivos históricos de la marca usando modelos de IA generativa.</p>
+        </div>
+        <div class="card">
+          <h3>Empaques Conectados</h3>
+          <p>Códigos QR dinámicos en latas y botellas que convierten cada envase físico en un canal directo de fidelización y música.</p>
+        </div>
+        <div class="card">
+          <h3>Analítica Predictiva</h3>
+          <p>Optimización de rutas, inventario en refrigeradores inteligentes y precios dinámicos según clima y eventos locales.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: SOSTENIBILIDAD -->
+    <section class="slide theme-dark" data-note="El mayor reto estructural de la industria es el plástico de un solo uso; la estrategia actual prioriza envases retorables, aligeramiento y resina reciclada (rPET).">
+      <span class="eyebrow">10 · Responsabilidad Ambiental</span>
+      <h2>Economía Circular y Gestión del Agua</h2>
+      <p class="lead">La licencia social para operar en el siglo XXI exige rediseñar cada envase y proteger las cuencas hídricas donde opera la compañía.</p>
+      <div class="grid-3">
+        <div class="card">
+          <span class="card-num">100% rPET</span>
+          <h3>Botellas de Botellas</h3>
+          <p>Expansión de envases fabricados íntegramente con plástico reciclado de grado alimenticio en decenas de mercados.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">Retornables</span>
+          <h3>Modelo Circular</h3>
+          <p>En América Latina, las botellas retornables de vidrio y PET representan una pieza clave para reducir residuos y costos al consumidor.</p>
+        </div>
+        <div class="card">
+          <span class="card-num">+100%</span>
+          <h3>Reabastecimiento Hídrico</h3>
+          <p>Proyectos de reforestación y conservación de cuencas que devuelven a la naturaleza un volumen equivalente al agua utilizada en producción.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: CIERRE -->
+    <section class="slide theme-red" data-note="Cierre: Resalta la gran lección estratégica de Coca-Cola: mantener inalterables los códigos centrales de identidad mientras se reinventa el mensaje para cada nueva generación.">
+      <span class="eyebrow">11 · Legado Estratégico</span>
+      <h1 class="script-title">Consistencia en la Esencia, Audacia en el Cambio</h1>
+      <p class="lead">La lección definitiva de Coca-Cola: las marcas eternas no cambian quiénes son, sino cómo conversan con cada generación.</p>
+      <div class="pill-row" style="margin-top: 2rem;">
+        <span class="pill">Identidad Inconfundible</span>
+        <span class="pill">Conexión Emocional</span>
+        <span class="pill">Capilaridad Global</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Speaker Notes Drawer -->
+  <aside class="notes-drawer" id="notesDrawer">
+    <h4>Notas del Orador</h4>
+    <p id="noteText"></p>
+  </aside>
+
+  <!-- Bottom Progress & Controls -->
+  <footer class="bottom-bar">
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="slide-counter" id="slideCounter">1 / 12</div>
+    <div class="nav-buttons">
+      <button class="nav-btn" id="prevBtn" aria-label="Diapositiva anterior">&#8592;</button>
+      <button class="nav-btn" id="nextBtn" aria-label="Siguiente diapositiva">&#8594;</button>
+    </div>
+  </footer>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const progressBar = document.getElementById('progressBar');
+    const slideCounter = document.getElementById('slideCounter');
+    const noteText = document.getElementById('noteText');
+    const notesDrawer = document.getElementById('notesDrawer');
+    let current = 0;
+
+    function updateDeck(index) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active', 'prev');
+        if (i === current) {
+          slide.classList.add('active');
+        } else if (i < current) {
+          slide.classList.add('prev');
+        }
+      });
+      const pct = ((current + 1) / slides.length) * 100;
+      progressBar.style.width = pct + '%';
+      slideCounter.textContent = `${current + 1} / ${slides.length}`;
+      noteText.textContent = slides[current].dataset.note || 'Sin notas adicionales para esta diapositiva.';
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => updateDeck(current + 1));
+    document.getElementById('prevBtn').addEventListener('click', () => updateDeck(current - 1));
+
+    document.getElementById('toggleNotes').addEventListener('click', () => {
+      notesDrawer.classList.toggle('open');
+    });
+
+    document.getElementById('toggleFullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        updateDeck(current + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        updateDeck(current - 1);
+      } else if (e.key.toLowerCase() === 'n') {
+        notesDrawer.classList.toggle('open');
+      } else if (e.key.toLowerCase() === 'f') {
+        document.getElementById('toggleFullscreen').click();
+      }
+    });
+
+    // Touch swipe support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    document.addEventListener('touchend', (e) => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        if (diff < 0) updateDeck(current + 1);
+        else updateDeck(current - 1);
+      }
+    });
+
+    // Generate subtle carbonation bubbles
+    const bubblesContainer = document.getElementById('bubbles');
+    for (let i = 0; i < 24; i++) {
+      const b = document.createElement('span');
+      b.className = 'bubble';
+      const size = Math.random() * 14 + 4;
+      b.style.width = size + 'px';
+      b.style.height = size + 'px';
+      b.style.left = Math.random() * 100 + '%';
+      b.style.animationDuration = (Math.random() * 8 + 6) + 's';
+      b.style.animationDelay = (Math.random() * 6) + 's';
+      bubblesContainer.appendChild(b);
+    }
+
+    updateDeck(0);
+  </script>
+</body>
+</html>
